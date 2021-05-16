@@ -1,7 +1,6 @@
 package com.github.server.utils;
 
-import antlr.Token;
-import com.github.server.exceptions.TokenProviderException;
+import com.github.server.exceptions.BadRequest;
 import com.github.server.payload.PrivateToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.Date;
 
 public class TokenProvider {
 
@@ -22,52 +22,64 @@ public class TokenProvider {
 
     private static final String SECRET_KEY = "MakeItBunDem";
 
-    private static final String SALT = "WebChat";
+    private static final String SALT = "ServletChat";
 
     private static byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    public static String encode(PrivateToken t) throws TokenProviderException {
+
+    public static String encode(PrivateToken t) {
         if (t == null) {
-            throw new TokenProviderException("Empty token");
+            throw new BadRequest("Empty token!");
         }
         String str = JsonHelper.toJson(t).get();
-        log.info(str);
-
         try {
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
 
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
+            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
             return Base64.getEncoder()
                     .encodeToString(cipher.doFinal(str.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
             log.error("Error while encrypting: " + e);
         }
+        log.info("Cipher token!");
         return null;
     }
 
-    public static PrivateToken decoding(String str) {
-        PrivateToken newToken = null;
+    public static PrivateToken decode(String str) {
+        PrivateToken newT = null;
 
         try {
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
+            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-            newToken = JsonHelper.fromJson(new String(cipher.doFinal(Base64.getDecoder().decode(str))), PrivateToken.class).orElse(null);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
+            newT = JsonHelper.fromJson(new String(cipher.doFinal(Base64.getDecoder().decode(str))), PrivateToken.class).orElse(null);
         } catch (Exception e) {
-            log.error("Error while encrypting: " + e);
+            log.error("Error while decrypting: " + e);
         }
-        return newToken;
+        return newT;
+    }
+
+    public static boolean checkToken(String str) {
+        PrivateToken token = decode(str);
+        if (token == null) {
+            log.info("Token is null!");
+            return false;
+        }
+        if (token.getExpireIn().compareTo(new Date()) < 0) {
+            log.info("Token expired!");
+            return false;
+        }
+        return true;
     }
 }

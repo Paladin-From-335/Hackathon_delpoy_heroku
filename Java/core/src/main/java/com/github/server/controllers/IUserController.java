@@ -10,5 +10,4 @@ public interface IUserController {
     void register(UserRegDto userRegDto);
 
 
-
 }

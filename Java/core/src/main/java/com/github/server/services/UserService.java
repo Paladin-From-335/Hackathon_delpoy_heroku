@@ -16,32 +16,32 @@ public class UserService implements IUserService {
 
     @Override
     public Collection<User> findAll() {
-        return this.userRepository.findAll(User.class, HibernateUtils.getSession());
+        return this.userRepository.findAll(HibernateUtils.getSession());
     }
 
     @Override
     public User findById(Long id) {
-        return this.userRepository.findBy(User.class, "id", id, HibernateUtils.getSession());
+        return this.userRepository.findBy("id", id, HibernateUtils.getSession());
     }
 
     @Override
     public User findByLogin(String login) {
-        return this.userRepository.findBy(User.class, "login", login, HibernateUtils.getSession());
+        return this.userRepository.findBy("login", login, HibernateUtils.getSession());
     }
 
     @Override
     public User findByEmail(String email) {
-        return this.userRepository.findBy(User.class, "email", email, HibernateUtils.getSession());
+        return this.userRepository.findBy("email", email, HibernateUtils.getSession());
     }
 
     @Override
     public void insert(User user) {
-        this.userRepository.save(User.class, user, HibernateUtils.getSession());
+        this.userRepository.save(user, HibernateUtils.getSession());
     }
 
     @Override
     public void update(User user) {
-        this.userRepository.update(User.class, user, HibernateUtils.getSession());
+        this.userRepository.update(user, HibernateUtils.getSession());
     }
 
 }

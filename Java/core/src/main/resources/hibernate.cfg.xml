@@ -4,7 +4,8 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:postgresql://ec2-34-200-94-86.compute-1.amazonaws.com:5432/d75f64jp5hgdqd</property>
+        <property name="connection.url">jdbc:postgresql://ec2-34-200-94-86.compute-1.amazonaws.com:5432/d75f64jp5hgdqd
+        </property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="connection.username">zdccdjeritewxg</property>
         <property name="connection.password">b7affe398a455175962f57a4d41c033b74f478aeed1669d51cc966d63af1b6ae</property>

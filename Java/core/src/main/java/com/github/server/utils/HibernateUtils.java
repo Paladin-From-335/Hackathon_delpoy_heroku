@@ -24,14 +24,14 @@ public class HibernateUtils {
                 configuration.addAnnotatedClass(User.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
-            } catch (IOException e){
+            } catch (IOException e) {
                 log.error(e.getMessage());
             }
         }
         return sessionFactory;
     }
 
-    public static Session getSession(){
+    public static Session getSession() {
         return getSessionFactory().openSession();
     }
 

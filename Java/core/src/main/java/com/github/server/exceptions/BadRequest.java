@@ -1,6 +1,6 @@
 package com.github.server.exceptions;
 
-public class BadRequest extends RuntimeException{
+public class BadRequest extends RuntimeException {
 
     public BadRequest() {
     }

@@ -35,12 +35,7 @@ public class UserController implements IUserController {
             throw new ForbiddenException();
         }
         PrivateToken token = new PrivateToken(user);
-        try {
-            String encodedToken = TokenProvider.encode(token);
-        } catch (TokenProviderException e) {
-            log.warn(e.getMessage());
-            throw new InternalServerError();
-        }
+        String encodedToken = TokenProvider.encode(token);
         Envelope env = new Envelope(user.getRole(), JsonHelper.toJson(token).orElseThrow(InternalServerError::new));
         return JsonHelper.toJson(env).orElseThrow(InternalServerError::new);
     }

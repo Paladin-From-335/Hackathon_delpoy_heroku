@@ -1,6 +1,6 @@
 package com.github.server.exceptions;
 
-public class JsonParseException extends RuntimeException{
+public class JsonParseException extends RuntimeException {
 
     public JsonParseException() {
     }

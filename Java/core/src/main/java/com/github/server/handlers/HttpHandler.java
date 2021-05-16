@@ -1,5 +1,6 @@
 package com.github.server.handlers;
 
+import com.github.server.controllers.IAdminController;
 import com.github.server.controllers.IUserController;
 import com.github.server.dto.UserAuthDto;
 import com.github.server.dto.UserRegDto;
@@ -26,8 +27,11 @@ public class HttpHandler extends HttpServlet {
 
     private final IUserController userController;
 
-    public HttpHandler(IUserController userController) {
+    private final IAdminController adminController;
+
+    public HttpHandler(IUserController userController, IAdminController adminController) {
         this.userController = userController;
+        this.adminController = adminController;
     }
 
     @Override
@@ -42,7 +46,23 @@ public class HttpHandler extends HttpServlet {
     }
 
     @Override
+    public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "*");
+        resp.setHeader("Access-Control-Allow-Headers", "*");
+        resp.setStatus(204);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "*");
+        resp.setHeader("Access-Control-Allow-Headers", "*");
         String body = req.getReader().lines().collect(Collectors.joining());
         if (!"application/json".equalsIgnoreCase(req.getHeader("Content-Type"))) {
             resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Invalid content type");

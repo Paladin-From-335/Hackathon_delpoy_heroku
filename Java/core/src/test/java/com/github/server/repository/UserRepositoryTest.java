@@ -17,12 +17,12 @@ import java.util.List;
 
 public class UserRepositoryTest {
 
-    private static final IRepository<User> repository = new Repository<>();
+    private static final IRepository<User> repository = new Repository<>(User.class);
 
     private static final List<User> mockData = new ArrayList<>();
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
 
         mockData.add(new User(null, "firstUserLogin", "firstUserEmail", "firstUserPassword", Role.valueOf("USER")));
         mockData.add(new User(null, "secondUserLogin", "secondUserEmail", "secondUserPassword", Role.valueOf("USER")));
@@ -30,50 +30,50 @@ public class UserRepositoryTest {
         mockData.add(new User(null, "firstAdminLogin", "firstAdminEmail", "firstAdminPassword", Role.valueOf("ADMIN")));
         mockData.add(new User(null, "secondAdminLogin", "secondAdminEmail", "secondAdminPassword", Role.valueOf("ADMIN")));
 
-        for (User user: mockData) {
-            repository.save(User.class, user, HibernateUtils.getSession());
+        for (User user : mockData) {
+            repository.save(user, HibernateUtils.getSession());
         }
     }
 
     @AfterClass
-    public static void tearDown(){
-        Collection<User> users = repository.findAll(User.class, HibernateUtils.getSession());
-        for (User user : users ) {
-            repository.delete(User.class, user, HibernateUtils.getSession());
+    public static void tearDown() {
+        Collection<User> users = repository.findAll(HibernateUtils.getSession());
+        for (User user : users) {
+            repository.delete(user, HibernateUtils.getSession());
         }
     }
 
     @Test
-    public void findByLoginFirstUser(){
-        User act = repository.findBy(User.class, "login", "firstUserLogin", HibernateUtils.getSession());
+    public void findByLoginFirstUser() {
+        User act = repository.findBy("login", "firstUserLogin", HibernateUtils.getSession());
         User exp = new User(act.getId(), "firstUserLogin", "firstUserEmail", "firstUserPassword", Role.valueOf("USER"));
         Assert.assertEquals(exp, act);
     }
 
     @Test
-    public void findByEmailThirdUser(){
-        User act = repository.findBy(User.class, "email", "thirdUserEmail", HibernateUtils.getSession());
+    public void findByEmailThirdUser() {
+        User act = repository.findBy("email", "thirdUserEmail", HibernateUtils.getSession());
         User exp = new User(act.getId(), "thirdUserLogin", "thirdUserEmail", "thirdUserPassword", Role.valueOf("USER"));
         Assert.assertEquals(exp, act);
     }
 
     @Test
-    public void findByLoginFirstAdmin(){
-        User act = repository.findBy(User.class, "login", "firstAdminLogin", HibernateUtils.getSession());
+    public void findByLoginFirstAdmin() {
+        User act = repository.findBy("login", "firstAdminLogin", HibernateUtils.getSession());
         User exp = new User(act.getId(), "firstAdminLogin", "firstAdminEmail", "firstAdminPassword", Role.valueOf("ADMIN"));
         Assert.assertEquals(exp, act);
     }
 
     @Test
-    public void findByEmailSecondAdmin(){
-        User act = repository.findBy(User.class, "email", "secondAdminEmail", HibernateUtils.getSession());
+    public void findByEmailSecondAdmin() {
+        User act = repository.findBy("email", "secondAdminEmail", HibernateUtils.getSession());
         User exp = new User(act.getId(), "secondAdminLogin", "secondAdminEmail", "secondAdminPassword", act.getRole());
         Assert.assertEquals(exp, act);
     }
 
     @Test
-    public void update(){
-        User userToUpdate = repository.findBy(User.class, "login", "firstUserLogin", HibernateUtils.getSession());
+    public void update() {
+        User userToUpdate = repository.findBy("login", "firstUserLogin", HibernateUtils.getSession());
         User exp = new User(
                 userToUpdate.getId(),
                 "newFirstUserLogin",
@@ -81,38 +81,38 @@ public class UserRepositoryTest {
                 "newFirstUserPassword",
                 Role.valueOf("ADMIN")
         );
-        repository.update(User.class, exp, HibernateUtils.getSession());
-        User act = repository.findBy(User.class, "id", exp.getId(), HibernateUtils.getSession());
+        repository.update(exp, HibernateUtils.getSession());
+        User act = repository.findBy("id", exp.getId(), HibernateUtils.getSession());
         Assert.assertEquals(exp, act);
-        repository.update(User.class, userToUpdate, HibernateUtils.getSession());
+        repository.update(userToUpdate, HibernateUtils.getSession());
     }
 
     @Test
-    public void delete(){
-        Collection<User> exp = repository.findAll(User.class, HibernateUtils.getSession());
+    public void delete() {
+        Collection<User> exp = repository.findAll(HibernateUtils.getSession());
         exp.removeIf(u -> u.getEmail().equals("secondUserEmail"));
-        User userToDelete = repository.findBy(User.class, "email", "secondUserEmail", HibernateUtils.getSession());
-        repository.delete(User.class, userToDelete, HibernateUtils.getSession());
-        Collection<User> act = repository.findAll(User.class, HibernateUtils.getSession());
+        User userToDelete = repository.findBy("email", "secondUserEmail", HibernateUtils.getSession());
+        repository.delete(userToDelete, HibernateUtils.getSession());
+        Collection<User> act = repository.findAll(HibernateUtils.getSession());
         Assert.assertEquals(exp, act);
     }
 
     @Test
-    public void findAllAdmins(){
+    public void findAllAdmins() {
         Collection<User> exp = new ArrayList<>();
-        Collection<User> act = repository.findAllBy(User.class, "role", Role.valueOf("ADMIN"), HibernateUtils.getSession());
+        Collection<User> act = repository.findAllBy("role", Role.valueOf("ADMIN"), HibernateUtils.getSession());
         exp.add(new User(null, "firstAdminLogin", "firstAdminEmail", "firstAdminPassword", Role.valueOf("ADMIN")));
         exp.add(new User(null, "secondAdminLogin", "secondAdminEmail", "secondAdminPassword", Role.valueOf("ADMIN")));
     }
 
     @Test
     public void findNotExisting(){
-        System.out.println(repository.findBy(User.class, "email", "notExisting", HibernateUtils.getSession()));
+        System.out.println(repository.findBy("email", "notExisting", HibernateUtils.getSession()));
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void saveSame(){
-        repository.save(User.class,
+        repository.save(
                 new User(null, "secondAdminLogin", "secondAdminEmail", "secondAdminPassword", Role.valueOf("ADMIN")),
                 HibernateUtils.getSession()
         );

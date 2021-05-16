@@ -1,33 +1,49 @@
 package com.github.server.entity;
 
-import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
-public class Tournament implements Serializable {
+@Entity
+@Table(name = "tournament", schema = "public")
+public class Tournament {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "mode")
     private String mode;
 
+    @Column(name = "place")
     private String place;
 
-    private Date startDate;
+    @Column(name = "dateStart")
+    private Date dateStart;
 
-    private Date lastDayReg;
+    @Column(name = "dateRegEnd")
+    private Date dateRegEnd;
 
-    private String difficult;
+    @Column(name = "level")
+    private String level;
 
+    @Column(name = "maxPlayers")
     private Integer maxPlayers;
 
+    @Column(name = "scenario")
     private String scenario;
 
-    private String listPlayers;
+    @Column(name = "players")
+    private String players;
 
+    @Column(name = "status")
     private String status;
 
     public Integer getId() {
@@ -70,28 +86,28 @@ public class Tournament implements Serializable {
         this.place = place;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getDateStart() {
+        return dateStart;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setDateStart(Date startDate) {
+        this.dateStart = startDate;
     }
 
-    public Date getLastDayReg() {
-        return lastDayReg;
+    public Date getDateRegEnd() {
+        return dateRegEnd;
     }
 
-    public void setLastDayReg(Date lastDayReg) {
-        this.lastDayReg = lastDayReg;
+    public void setDateRegEnd(Date lastDayReg) {
+        this.dateRegEnd = lastDayReg;
     }
 
-    public String getDifficult() {
-        return difficult;
+    public String getLevel() {
+        return level;
     }
 
-    public void setDifficult(String difficult) {
-        this.difficult = difficult;
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public Integer getMaxPlayers() {
@@ -110,12 +126,12 @@ public class Tournament implements Serializable {
         this.scenario = scenario;
     }
 
-    public String getListPlayers() {
-        return listPlayers;
+    public String getPlayers() {
+        return players;
     }
 
-    public void setListPlayers(String listPlayers) {
-        this.listPlayers = listPlayers;
+    public void setPlayers(String listPlayers) {
+        this.players = listPlayers;
     }
 
     public String getStatus() {
@@ -146,12 +162,12 @@ public class Tournament implements Serializable {
         this.description = description;
         this.mode = mode;
         this.place = place;
-        this.startDate = startDate;
-        this.lastDayReg = lastDayReg;
-        this.difficult = difficult;
+        this.dateStart = startDate;
+        this.dateRegEnd = lastDayReg;
+        this.level = difficult;
         this.maxPlayers = maxPlayers;
         this.scenario = scenario;
-        this.listPlayers = listPlayers;
+        this.players = listPlayers;
         this.status = status;
     }
 
@@ -161,12 +177,12 @@ public class Tournament implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tournament that = (Tournament) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(mode, that.mode) && Objects.equals(place, that.place) && Objects.equals(startDate, that.startDate) && Objects.equals(lastDayReg, that.lastDayReg) && Objects.equals(difficult, that.difficult) && Objects.equals(maxPlayers, that.maxPlayers) && Objects.equals(scenario, that.scenario) && Objects.equals(listPlayers, that.listPlayers) && Objects.equals(status, that.status);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(mode, that.mode) && Objects.equals(place, that.place) && Objects.equals(dateStart, that.dateStart) && Objects.equals(dateRegEnd, that.dateRegEnd) && Objects.equals(level, that.level) && Objects.equals(maxPlayers, that.maxPlayers) && Objects.equals(scenario, that.scenario) && Objects.equals(players, that.players) && Objects.equals(status, that.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, mode, place, startDate, lastDayReg, difficult, maxPlayers, scenario, listPlayers, status);
+        return Objects.hash(id, name, description, mode, place, dateStart, dateRegEnd, level, maxPlayers, scenario, players, status);
     }
 
     @Override
@@ -178,12 +194,12 @@ public class Tournament implements Serializable {
                 ", description='" + description + '\'' +
                 ", mode='" + mode + '\'' +
                 ", place='" + place + '\'' +
-                ", startDate=" + startDate +
-                ", lastDayReg=" + lastDayReg +
-                ", difficult='" + difficult + '\'' +
+                ", startDate=" + dateStart +
+                ", lastDayReg=" + dateRegEnd +
+                ", difficult='" + level + '\'' +
                 ", maxPlayers=" + maxPlayers +
                 ", scenario='" + scenario + '\'' +
-                ", listPlayers='" + listPlayers + '\'' +
+                ", listPlayers='" + players + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }

@@ -57,7 +57,7 @@ public class HttpHandler extends HttpServlet {
                         }
                         String result = Optional.of(this.userController.authorize(authDto)).orElseThrow(BadRequest::new);
                         resp.setContentType("application/json");
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        resp.setStatus(HttpServletResponse.SC_OK);
                         ServletOutputStream out = resp.getOutputStream();
                         out.write(result.getBytes());
                         out.flush();
@@ -69,19 +69,19 @@ public class HttpHandler extends HttpServlet {
                             throw new BadRequest();
                         }
                         this.userController.register(regDto);
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        resp.setStatus(HttpServletResponse.SC_OK);
                         break;
                     default:
                         resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (BadRequest e) {
-                resp.setStatus(400);
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }catch (ForbiddenException e) {
-                resp.setStatus(403);
+                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }catch (ConstraintViolationException e) {
-                resp.setStatus(409);
+                resp.setStatus(HttpServletResponse.SC_CONFLICT);
             } catch (Throwable e) {
-                resp.setStatus(500);
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
     }
